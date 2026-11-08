@@ -1,5 +1,19 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404
+from book.models import Book
+
+
+def book_list_view(request):
+    if request.method == 'GET':
+        books = Book.objects.all().order_by('-id')
+        return render(request, 'book_list.html', {'books': books})
+
+
+def book_detail_view(request, id):
+    if request.method == 'GET':
+        book_id = get_object_or_404(Book, id=id)
+        return render(request, 'book_detail.html', {'book_id': book_id})
 
 def about_me(request):
     return HttpResponse("<h1>Обо мне</h1><p>Меня зовут Николь, люблю активный образ жизни и читать книги</p>")

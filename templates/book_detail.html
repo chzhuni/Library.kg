@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ book_id.title }} — Library.kg</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f5f7; margin: 0; color: #222; }
+        header { background: #1f3a5f; color: #fff; padding: 18px 24px; font-size: 22px; font-weight: bold; }
+        .container { max-width: 900px; margin: 0 auto; padding: 24px 16px; }
+        .back { display: inline-block; margin-bottom: 16px; color: #1a56c4; text-decoration: none; }
+        .back:hover { text-decoration: underline; }
+        .book { display: flex; gap: 28px; background: #fff; border-radius: 10px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,.1); flex-wrap: wrap; }
+        .book img { width: 280px; max-width: 100%; border-radius: 8px; object-fit: cover; }
+        .info { flex: 1; min-width: 260px; }
+        .genre { display: inline-block; background: #e8f0fe; color: #1a56c4; font-size: 12px; padding: 3px 10px; border-radius: 12px; }
+        h1 { margin: 12px 0 4px; }
+        .author { color: #666; margin-bottom: 16px; }
+        table { border-collapse: collapse; margin-bottom: 16px; }
+        td { padding: 4px 16px 4px 0; font-size: 14px; }
+        td:first-child { color: #888; }
+        .price { font-size: 24px; font-weight: bold; margin: 8px 0; }
+        .in { color: #1e8e3e; } .out { color: #d93025; }
+        .desc { line-height: 1.7; margin-top: 16px; }
+    </style>
+</head>
+<body>
+<header>Library.kg</header>
+<div class="container">
+    <a class="back" href="{% url 'book_list' %}">← Ко всем книгам</a>
+    <div class="book">
+        <img src="{{ book_id.cover.url }}" alt="{{ book_id.title }}">
+        <div class="info">
+            <span class="genre">{{ book_id.genre }}</span>
+            <h1>{{ book_id.title }}</h1>
+            <div class="author">{{ book_id.author }}</div>
+            <table>
+                {% if book_id.isbn %}<tr><td>ISBN</td><td>{{ book_id.isbn }}</td></tr>{% endif %}
+                <tr><td>Добавлена</td><td>{{ book_id.created_at|date:"d.m.Y" }}</td></tr>
+            </table>
+            <div class="price">{{ book_id.price }} сом</div>
+            {% if book_id.is_available %}<span class="in">В наличии</span>{% else %}<span class="out">Нет в наличии</span>{% endif %}
+            <div class="desc">{{ book_id.description|linebreaks }}</div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
