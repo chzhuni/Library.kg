@@ -1,0 +1,76 @@
+{% extends 'orders/base.html' %}
+
+{% block title %}Заказы{% endblock %}
+
+{% block extra_style %}
+<style>
+    .table-wrap { background: #fff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.07); overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f8f9fc; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #6b7280; padding: 14px 16px; }
+    td { padding: 14px 16px; border-top: 1px solid #eef0f5; font-size: 14px; vertical-align: middle; }
+    tr:hover td { background: #fafbff; }
+    .product { display: flex; align-items: center; gap: 12px; }
+    .product img, .no-img { width: 52px; height: 52px; border-radius: 8px; object-fit: cover; flex-shrink: 0; }
+    .no-img { background: #e5e7eb; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 22px; }
+    .muted { color: #6b7280; font-size: 12px; }
+    .sum { font-weight: 700; white-space: nowrap; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+    .status-new { background: #dbeafe; color: #1d4ed8; }
+    .status-processing { background: #fef3c7; color: #b45309; }
+    .status-shipping { background: #e0e7ff; color: #4338ca; }
+    .status-delivered { background: #dcfce7; color: #15803d; }
+    .status-canceled { background: #fee2e2; color: #b91c1c; }
+    .actions { display: flex; gap: 8px; }
+    .empty { text-align: center; padding: 40px; color: #6b7280; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="top">
+    <h1>Заказы</h1>
+    <a class="btn btn-primary" href="{% url 'create_order' %}">+ Добавить заказ</a>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <tr>
+            <th>№</th>
+            <th>Товар</th>
+            <th>Покупатель</th>
+            <th>Кол-во</th>
+            <th>Сумма</th>
+            <th>Статус</th>
+            <th>Дата</th>
+            <th></th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>
+                <div class="product">
+                    {% if order.product_image %}
+                        <img src="{{ order.product_image.url }}" alt="{{ order.product_name }}">
+                    {% else %}
+                        <div class="no-img">📦</div>
+                    {% endif %}
+                    <div>{{ order.product_name }}<div class="muted">{{ order.price|floatformat:"-2" }} сом за шт.</div></div>
+                </div>
+            </td>
+            <td>{{ order.customer_name }}<div class="muted">{{ order.phone }} · {{ order.address }}</div></td>
+            <td>{{ order.quantity }}</td>
+            <td class="sum">{{ order.total_price|floatformat:"-2" }} сом</td>
+            <td><span class="badge status-{{ order.status }}">{{ order.get_status_display }}</span></td>
+            <td>{{ order.created_at|date:"d.m.Y" }}</td>
+            <td>
+                <div class="actions">
+                    <a class="btn btn-edit" href="{% url 'update_order' order.id %}">Изменить</a>
+                    <a class="btn btn-delete" href="{% url 'drop_order' order.id %}" onclick="return confirm('Удалить заказ №{{ order.id }}?')">Удалить</a>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="empty">Заказов пока нет. Добавьте первый!</td></tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}
